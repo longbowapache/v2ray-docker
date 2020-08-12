@@ -1,0 +1,6 @@
+version: '3.3'
+
+services:
+   sw-v2ray:
+     image: sw-v2ray
+     container_name: sw-v2ray
