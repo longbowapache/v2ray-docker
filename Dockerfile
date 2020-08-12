@@ -23,6 +23,6 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
     && chmod +x update_rules.sh \
     && chmod +x /entrypoint.sh \
     && apk del tzdata zip \
-    && echo "*/2 * * * * update_rules.sh ${V2RAY_PATH} >> /tmp/update_rules.log 2>&1" >> /var/spool/cron/crontabs/root
+    && echo "0 3 * * * update_rules.sh ${V2RAY_PATH} >> /tmp/update_rules.log 2>&1" >> /var/spool/cron/crontabs/root
 
 ENTRYPOINT ["/entrypoint.sh"]
