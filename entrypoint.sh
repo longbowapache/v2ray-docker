@@ -7,11 +7,15 @@ bye() {
     exit 0
 }
 
+run_v2ray() {
+    v2ray -c /etc/v2ray/config.json
+}
+
 /usr/sbin/crond
 
-v2ray
 
 while :
 do
-    sleep 10
+    run_v2ray
+    sleep 3
 done

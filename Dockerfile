@@ -1,28 +1,31 @@
 FROM alpine:latest
 
-ENV VERSION 4.27.0
-ENV V2RAY_PATH /opt/v2ray/
-ENV V2RAY_ZIP_FILE v2ray-linux-arm64-v8a.zip
+ENV V2RAY_PATH /usr/bin/v2ray
 ENV PATH=${V2RAY_PATH}:${PATH}
 ENV TZ=Asia/Shanghai
 
 WORKDIR ${V2RAY_PATH}
 
-COPY update_rules.sh ${WORKDIR}
+COPY update_rules.sh ${V2RAY_PATH}
+COPY download_v2ray.sh ${V2RAY_PATH}
 COPY entrypoint.sh /
 
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
-    && apk add zip tzdata \
+    && apk add tzdata curl bash \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" > /etc/timezone \
-    && wget -q https://github.com/v2ray/v2ray-core/releases/download/v${VERSION}/${V2RAY_ZIP_FILE} \
-    && unzip ${V2RAY_ZIP_FILE} \
-    && chmod +x v2ray v2ctl \
-    && rm *.zip \
+    && download_v2ray.sh \
+    && curl -L -o go.sh -s https://install.direct/go.sh \
+    && chmod +x go.sh \
+    && go.sh --local v2ray.zip \
+    && rm v2ray.zip \
+    && rm go.sh \
+    && rm download_v2ray.sh \
     && chmod +x update_rules.sh \
     && chmod +x /entrypoint.sh \
-    && apk del tzdata zip \
-    && echo "0 8 * * * update_rules.sh ${V2RAY_PATH} >> /tmp/update_rules.log 2>&1" >> /var/spool/cron/crontabs/root
+    && echo "0 8 * * * update_rules.sh ${V2RAY_PATH} >> /tmp/update_rules.log 2>&1" >> /var/spool/cron/crontabs/root \
+    && update_rules.sh ${V2RAY_PATH} \
+    && apk del tzdata bash 
 
 ENTRYPOINT ["/entrypoint.sh"]
