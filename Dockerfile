@@ -24,7 +24,6 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
     && rm download_v2ray.sh \
     && chmod +x update_rules.sh \
     && chmod +x /entrypoint.sh \
-    && echo "0 8 * * * update_rules.sh ${V2RAY_PATH} >> /tmp/update_rules.log 2>&1" >> /var/spool/cron/crontabs/root \
     && update_rules.sh ${V2RAY_PATH} \
     && apk del bash 
 
